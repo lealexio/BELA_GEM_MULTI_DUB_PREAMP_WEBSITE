@@ -1,0 +1,34 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../i18n/ui';
+import { parseVersionId } from '../i18n/utils';
+
+interface Props {
+	locale: Locale;
+	versions: CollectionEntry<'versions'>[];
+}
+
+const { locale, versions } = Astro.props;
+
+const items = versions
+	.map((entry) => {
+		const { version, locale: entryLocale } = parseVersionId(entry.id);
+		return { entry, version, entryLocale };
+	})
+	.filter(({ entryLocale }) => entryLocale === locale)
+	.sort((a, b) => a.entry.data.order - b.entry.data.order);
+---
+
+<ul class="card-list">
+	{
+		items.map(({ entry, version }) => (
+			<li>
+				<a href={getRelativeLocaleUrl(locale, `versions/${version}`)}>
+					<h2>{entry.data.title}</h2>
+					<p>{entry.data.description}</p>
+				</a>
+			</li>
+		))
+	}
+</ul>

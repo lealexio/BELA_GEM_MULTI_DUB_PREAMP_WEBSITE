@@ -1,0 +1,12 @@
+---
+import VersionDetailPage from '../../../../views/VersionDetailPage.astro';
+import { versionStaticPaths } from '../../../../lib/content';
+
+export async function getStaticPaths() {
+	return versionStaticPaths('en');
+}
+
+const { version } = Astro.params;
+---
+
+<VersionDetailPage locale="en" version={version!} />

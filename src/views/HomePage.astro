@@ -1,0 +1,35 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import VersionNav from '../components/VersionNav.astro';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { getVersionsForLocale } from '../lib/content';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const versions = await getVersionsForLocale(locale);
+
+const copy = {
+	fr: {
+		title: 'Documentation de fabrication',
+		lead: 'Tutoriels étape par étape pour construire le préamplificateur audio DIY BELA GEM Multi Dub.',
+	},
+	en: {
+		title: 'Build documentation',
+		lead: 'Step-by-step tutorials to build the BELA GEM Multi Dub DIY audio preamplifier.',
+	},
+} as const;
+---
+
+<BaseLayout locale={locale} title={copy[locale].title} description={copy[locale].lead}>
+	<h1>{t(locale, 'siteName')}</h1>
+	<p>{copy[locale].lead}</p>
+	<p>
+		<a href={getRelativeLocaleUrl(locale, 'versions')}>{t(locale, 'versions')}</a>
+	</p>
+	<VersionNav locale={locale} versions={versions} />
+</BaseLayout>

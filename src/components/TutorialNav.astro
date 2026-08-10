@@ -1,0 +1,44 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { parseTutorialId } from '../i18n/utils';
+
+interface Props {
+	locale: Locale;
+	version: string;
+	tutorials: CollectionEntry<'tutorials'>[];
+	currentStep?: string;
+}
+
+const { locale, version, tutorials, currentStep } = Astro.props;
+
+const items = tutorials
+	.map((entry) => {
+		const parsed = parseTutorialId(entry.id);
+		return { entry, ...parsed };
+	})
+	.filter((item) => item.locale === locale && item.version === version)
+	.sort((a, b) => a.entry.data.order - b.entry.data.order);
+---
+
+<nav aria-label={t(locale, 'tutorialSteps')}>
+	<ul class="step-nav">
+		{
+			items.map(({ entry, step }) => (
+				<li>
+					<a
+						href={getRelativeLocaleUrl(locale, `versions/${version}/${step}`)}
+						aria-current={step === currentStep ? 'page' : undefined}
+					>
+						<span class="step-nav__order">
+							{t(locale, 'stepOf')} {entry.data.order}
+						</span>
+						<span>{entry.data.title}</span>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</nav>

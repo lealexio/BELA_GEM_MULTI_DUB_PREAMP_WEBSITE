@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import VersionNav from '../components/VersionNav.astro';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { getVersionsForLocale } from '../lib/content';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const versions = await getVersionsForLocale(locale);
+---
+
+<BaseLayout
+	locale={locale}
+	title={t(locale, 'versions')}
+	pathAfterLocale="versions"
+>
+	<h1>{t(locale, 'versions')}</h1>
+	<VersionNav locale={locale} versions={versions} />
+</BaseLayout>

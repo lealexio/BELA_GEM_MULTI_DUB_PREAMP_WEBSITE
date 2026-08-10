@@ -1,0 +1,27 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { Locale } from '../i18n/ui';
+import { locales, t } from '../i18n/ui';
+
+interface Props {
+	locale: Locale;
+	/** Path after the locale prefix, e.g. `versions/stereo/wiring`. */
+	pathAfterLocale?: string;
+}
+
+const { locale, pathAfterLocale = '' } = Astro.props;
+---
+
+<nav class="lang-switch" aria-label={t(locale, 'language')}>
+	{
+		locales.map((code) => (
+			<a
+				href={getRelativeLocaleUrl(code, pathAfterLocale)}
+				hreflang={code}
+				aria-current={code === locale ? 'true' : undefined}
+			>
+				{code.toUpperCase()}
+			</a>
+		))
+	}
+</nav>

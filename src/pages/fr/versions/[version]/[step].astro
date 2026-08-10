@@ -1,0 +1,12 @@
+---
+import TutorialStepPage from '../../../../views/TutorialStepPage.astro';
+import { stepStaticPaths } from '../../../../lib/content';
+
+export async function getStaticPaths() {
+	return stepStaticPaths('fr');
+}
+
+const { version, step } = Astro.params;
+---
+
+<TutorialStepPage locale="fr" version={version!} step={step!} />

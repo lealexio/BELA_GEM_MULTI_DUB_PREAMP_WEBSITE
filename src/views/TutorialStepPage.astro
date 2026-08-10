@@ -1,0 +1,48 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TutorialNav from '../components/TutorialNav.astro';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { getTutorialEntry, getTutorialsForVersion, getVersionEntry } from '../lib/content';
+
+interface Props {
+	locale: Locale;
+	version: string;
+	step: string;
+}
+
+const { locale, version, step } = Astro.props;
+const entry = await getTutorialEntry(locale, version, step);
+const versionEntry = await getVersionEntry(locale, version);
+
+if (!entry || !versionEntry) {
+	throw new Error(`Missing tutorial content: ${version}/${step}/${locale}`);
+}
+
+const tutorials = await getTutorialsForVersion(locale, version);
+const { Content } = await render(entry);
+const pathAfterLocale = `versions/${version}/${step}`;
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${entry.data.title} · ${versionEntry.data.title}`}
+	description={entry.data.description}
+	pathAfterLocale={pathAfterLocale}
+>
+	<a class="back-link" href={getRelativeLocaleUrl(locale, `versions/${version}`)}>
+		← {t(locale, 'backToVersion')} ({versionEntry.data.title})
+	</a>
+	<article class="prose">
+		<Content />
+	</article>
+	<h2>{t(locale, 'tutorialSteps')}</h2>
+	<TutorialNav
+		locale={locale}
+		version={version}
+		tutorials={tutorials}
+		currentStep={step}
+	/>
+</BaseLayout>

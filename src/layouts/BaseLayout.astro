@@ -1,0 +1,36 @@
+---
+import Header from '../components/Header.astro';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import '../styles/global.css';
+
+interface Props {
+	locale: Locale;
+	title: string;
+	description?: string;
+	/** Path after the locale prefix, e.g. `versions/stereo`. */
+	pathAfterLocale?: string;
+}
+
+const { locale, title, description = '', pathAfterLocale = '' } = Astro.props;
+const pageTitle = `${title} · ${t(locale, 'siteName')}`;
+---
+
+<!doctype html>
+<html lang={locale}>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		{description && <meta name="description" content={description} />}
+		<title>{pageTitle}</title>
+	</head>
+	<body>
+		<Header locale={locale} pathAfterLocale={pathAfterLocale} />
+		<main>
+			<slot />
+		</main>
+	</body>
+</html>

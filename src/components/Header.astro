@@ -1,0 +1,26 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+
+interface Props {
+	locale: Locale;
+	pathAfterLocale?: string;
+}
+
+const { locale, pathAfterLocale = '' } = Astro.props;
+const homeUrl = getRelativeLocaleUrl(locale);
+const versionsUrl = getRelativeLocaleUrl(locale, 'versions');
+---
+
+<header class="site-header">
+	<div class="site-header__inner">
+		<a class="site-header__brand" href={homeUrl}>{t(locale, 'siteName')}</a>
+		<nav class="site-header__nav" aria-label="Primary">
+			<a href={homeUrl}>{t(locale, 'home')}</a>
+			<a href={versionsUrl}>{t(locale, 'versions')}</a>
+			<LanguageSwitcher locale={locale} pathAfterLocale={pathAfterLocale} />
+		</nav>
+	</div>
+</header>
